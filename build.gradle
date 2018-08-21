@@ -1,0 +1,33 @@
+
+buildscript {
+  ext {
+    grailsVersion = ""
+    dockerFile=project.file("docker/Dockerfile")
+    // must be a closure.  If set to =false then it thinks the proeprty does not exist
+    hasJar={false}
+
+    dockerStatementsOverride = {
+       [
+          "FROM donovanmuller/spring-cloud-dataflow-server-openshift:1.2.1.RELEASE"
+       ]
+     }
+    if(System.env.OMAR_COMMON_PROPERTIES)
+    {
+      apply from: System.env.OMAR_COMMON_PROPERTIES
+    }
+  }
+  repositories {
+    mavenLocal()
+    maven { url "${ossimMavenProxy}" }
+  }
+  dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
+        classpath 'com.github.skhatri:gradle-s3-plugin:1.0.4'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
+  }
+}
+
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "maven-publish"
+apply plugin: "maven"
